@@ -1,28 +1,4 @@
-import superaggent from 'superagent'
-class NodeJsCrowller {
-    private url = `https://nodejs.org/download/release/index.json`;
-    private jsonObj = null;
-
-    getJsonInfo(html: string) {
-        let jsonObj = JSON.parse(html);
-        return jsonObj;
-    }
-
-    async analysis2() {
-        await this.initSpiderProcess();
-        let res = this.jsonObj[0];
-        let latestDate = new Date(res.date);
-        let latestVersion = res.version;
-        for (let i = 0; i < this.jsonObj.length; i++) {
-            let tmpDate = new Date(this.jsonObj[i].date);
-            if (tmpDate > latestDate) {
-                latestDate = tmpDate;
-                latestVersion = this.jsonObj[i].version;
-            }
-        }
-        return latestVersion;
-    }
-
+export class NodeJsCrowler {
     analysis(): Promise<Object> {
         return new Promise((resolve, reject) => {
             const { exec } = require('node:child_process');
@@ -62,16 +38,4 @@ class NodeJsCrowller {
             })
         })
     }
-
-    async getRawHtml() {
-        const result = await superaggent.get(this.url);
-        return result.text;
-    }
-
-    async initSpiderProcess() {
-        const html = await this.getRawHtml();
-        this.jsonObj = await this.getJsonInfo(html);
-    }
 }
-new NodeJsCrowller();
-export { NodeJsCrowller }
